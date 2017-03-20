@@ -24,6 +24,9 @@
 			<span class="bulletin-title"></span>
 			<span class="bulletin-text">{{seller.bulletin}}</span><i class="icon-keyboard_arrow_right"></i>
 		</div>
+		<div class="background">
+			<img :src="seller.avatar" width='100%' height="100%">	
+		</div>
 	</div>
 </template>
 
@@ -41,9 +44,6 @@ export default {
 	@import '../../common/styles/mixin.less';
 	@import '../../common/styles/base.less';
 
-	.v-header {
-		background: #999999;
-	}
 	.content-wrapper {
 		font-size: 0;
 		padding: 24px 12px 4px 24px;
@@ -126,6 +126,7 @@ export default {
 		border-radius: 14px;
 		background: rgba(0,0,0,.2);
 		text-align: center;
+		color: #fff;
 		.count {
 			font-size: 10px;
 			vertical-align: top;
@@ -159,14 +160,24 @@ export default {
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			width: 80%;
 			font-size: 10px;
+			width: 88%;
 			display: inline-block;
-			margin: 0  0 0 4px; 
+			margin: 0 0 0 4px;
 			vertical-align: middle;
 		}
 		.icon-keyboard_arrow_right {
 			vertical-align: middle;
 		}
+	}
+	.background {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		height: 126px;
+		width: 100%;
+		z-index: -1; 
+		filter: blur(10px); 
 	}
 </style>
