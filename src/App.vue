@@ -27,7 +27,6 @@ Vue.use(VueResource);
 export default {
   name: 'app',
   created: function() {
-    console.log('created');
     this.seller = FalseData.seller;
   },
   components: {
