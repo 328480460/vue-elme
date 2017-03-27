@@ -35,7 +35,7 @@
 				</li>
 			</ul>
 		</div>
-		<ShopCart></ShopCart>
+		<ShopCart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></ShopCart>
 	</div>
 	
 </template>
@@ -53,6 +53,7 @@ export default {
   	}
   },
   created() {
+  	console.log(this.seller.deliveryPrice);
   	this.goods = FalseData.goods;
   	this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
   	this.$nextTick(() => {
