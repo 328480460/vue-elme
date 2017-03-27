@@ -27,12 +27,6 @@
 		<div class="background">
 			<img :src="seller.avatar" width='100%' height="100%">	
 		</div>
-		<div class="detail">
-			<div class="detail-wrapper">
-				<div class=""></div>
-			</div>
-			<div class="detail-close"></div>
-		</div>
 		<transition name="fade">	
 			<div v-show="datailShow"  class="detail">
 				<div class="detail-wrapper clearfix">
