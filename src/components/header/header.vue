@@ -27,14 +27,12 @@
 		<div class="background">
 			<img :src="seller.avatar" width='100%' height="100%">	
 		</div>
-<<<<<<< HEAD
 		<div class="detail">
 			<div class="detail-wrapper">
 				<div class=""></div>
 			</div>
 			<div class="detail-close"></div>
 		</div>
-=======
 		<transition name="fade">	
 			<div v-show="datailShow"  class="detail">
 				<div class="detail-wrapper clearfix">
@@ -70,7 +68,6 @@
 				</div>
 			</div>
 		</transition>
->>>>>>> db5edb6fab069198d0df595b8d4ea344a664c9b6
 	</div>
 </template>
 
