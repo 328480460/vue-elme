@@ -8,9 +8,12 @@ Vue.use(Router);
 
 export default new Router({
   mode: 'history',
-  base: __dirname,
   routes: [
     {
+      path: '/',
+      name: 'goods',
+      component: Goods
+    }, {
       path: '/goods',
       name: 'goods',
       component: Goods
