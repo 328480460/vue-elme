@@ -241,10 +241,10 @@
 				transform: translate3d(0,0,0);
 			}
 			&.fold-enter-active {
-				transition: all 0.5s;
+				transition: all .3s;
 			}
 			&.fold-leave-active {
-				transition: all 0.5s;
+				transition: all .3s;
 				transform: translate3d(0,0,0);
 			} 
 
