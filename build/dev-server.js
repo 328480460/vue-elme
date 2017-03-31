@@ -1,14 +1,12 @@
 require('./check-versions')()
-
 var config = require('../config')
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV)
 }
-
-var opn = require('opn')
 var path = require('path')
 var express = require('express')
 var webpack = require('webpack')
+var opn = require('opn')
 var proxyMiddleware = require('http-proxy-middleware')
 var webpackConfig = process.env.NODE_ENV === 'testing'
   ? require('./webpack.prod.conf')
@@ -23,7 +21,6 @@ var autoOpenBrowser = !!config.dev.autoOpenBrowser
 var proxyTable = config.dev.proxyTable
 
 var app = express()
-var compiler = webpack(webpackConfig)
 
 var appData = require('../data.json')
 var seller = appData.seller;
@@ -32,21 +29,21 @@ var ratings = appData.ratings;
 
 var apiRoutes = express.Router();
 
-apiRoutes.get('./seller',function(req,res,next){
+apiRoutes.get('/seller',function(req,res){
   res.json({
     errno: 0,
     data: seller
   })
 });
 
-apiRoutes.get('./goods',function(req,res){
+apiRoutes.get('/goods',function(req,res){
   res.json({
     errno: 0,
     data: goods
   })
 });
 
-apiRoutes.get('./ratings',function(req,res){
+apiRoutes.get('/ratings',function(req,res){
   res.json({
     errno: 0,
     data: ratings
@@ -55,30 +52,14 @@ apiRoutes.get('./ratings',function(req,res){
 
 app.use('/api', apiRoutes);
 
-/*app.get('./seller',function(req,res){
-  res.json({
-    errno: 0,
-    data: seller
-  })
-});
-
-app.get('./goods',function(req,res){
-  res.json({
-    errno: 0,
-    data: seller
-  })
-});
-
-app.get('./ratings',function(req,res){
-  res.json({
-    errno: 0,
-    data: ratings
-  })
-});*/
+var compiler = webpack(webpackConfig)
 
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
   publicPath: webpackConfig.output.publicPath,
-  quiet: true
+  stats: {
+    colors: true,
+    chunks: false
+  }
 })
 
 var hotMiddleware = require('webpack-hot-middleware')(compiler, {
@@ -115,17 +96,18 @@ app.use(hotMiddleware)
 var staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory)
 app.use(staticPath, express.static('./static'))
 
-var uri = 'http://localhost:' + port
 
 devMiddleware.waitUntilValid(function () {
   console.log('> Listening at ' + uri + '\n')
 })
 
+var uri = 'http://localhost:' + port
 module.exports = app.listen(port, function (err) {
   if (err) {
     console.log(err)
     return
   }
+  console.log('Listening at ' + uri + '\n')
 
   // when env is testing, don't need open it
   if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
