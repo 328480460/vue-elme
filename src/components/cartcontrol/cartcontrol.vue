@@ -73,7 +73,7 @@
                     transform: rotate(180deg);
                 }
             }
-             &.move-leave-active {
+            &.move-leave-active {
             	transition: all .5s;
             	opacity: 0;
                 transform: translate3d(24px, 0, 0);

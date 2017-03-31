@@ -38,7 +38,7 @@
 				</li>
 			</ul>
 		</div>
-		<ShopCart :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></ShopCart>
+		<ShopCart :select-foods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></ShopCart>
 	</div>
 	
 </template>
@@ -83,7 +83,19 @@ export default {
   			if (!height2 || this.scrollY >= height1 && this.scrollY < height2) {
   				return i;
   			}
-  		};
+  		}
+  		return 0;
+  	},
+  	selectFoods() {
+  		let foods = [];
+  		this.goods.forEach((good) => {
+  			good.foods.forEach((food) => {
+  				if (food.count) {
+  					foods.push(food);
+  				}
+  			});
+  		});
+  		return foods;
   	}
   },
   methods: {

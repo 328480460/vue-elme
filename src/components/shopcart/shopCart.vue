@@ -1,6 +1,6 @@
 <template>
 	<div id="shopCart" name="shopCart">
-		<div class="content">
+		<div class="content" @click="toggleList">
 			<div class="content-left">
 				<div class="logo-wrapper">
 					<div class="logo" :class="{'highlight': totalCount>0}">
@@ -17,17 +17,39 @@
 				</div>
 			</div>
 		</div>
+		<transition name="fold">
+			<div class="shopcart-list fold-transition" v-show="listShow">
+				<div class="list-header">
+					<h1 class="title">购物车</h1>
+					<span class="empty">清空</span>
+				</div>
+				<div class="list-content">
+					<ul>
+						<li class="food" v-for="food in selectFoods">
+							<span class="name">{{food.name}}</span>
+							<div class="price">
+								<span>￥{{food.price*food.count}}</span>
+							</div>
+							<div class="cartcontrol-wrapper">
+								<CartControl :food="food"></CartControl>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</transition>
 	</div>
 </template>
 
 <script>
+	import CartControl from '../cartcontrol/cartcontrol';
 	export default {
 	  name: 'shopCart',
 	  props: {
 	  	selectFoods: {
 	  		type: Array,
 	  		default() {
-	  			return [{price: 12, count: 1}];
+	  			return [];
 	  		}
 	  	},
 	  	deliveryPrice: {
@@ -38,6 +60,11 @@
 	  		type: Number,
 	  		default: 0
 	  	}
+	  },
+	  data() {
+	  	return {
+	  		fold: true
+	  	};
 	  },
 	  computed: {
 	  	totalPrice() {
@@ -56,7 +83,7 @@
 	  	},
 	  	payDesc() {
 	  		if (this.totalPrice === 0) {
-	  			return `￥{this.minPrice}元起送`;
+	  			return `￥${this.minPrice}元起送`;
 	  		} else if (this.totalPrice < this.minPrice) {
 	  			let diff = this.minPrice - this.totalPrice;
 	  			return `还差￥${diff}元起送`;
@@ -70,8 +97,28 @@
 	  		} else {
 	  			return 'enough';
 	  		}
+	  	},
+	  	listShow() {
+	  		if (!this.totalCount) {
+	  			this.fold = true;
+	  			return false;
+	  		}
+	  		let show = !this.fold;
+	  		return show;
 	  	}
+	  },
+	  methods: {
+	  	toggleList() {
+	  		if (!this.totalCount) {
+	  			return;
+	  		}
+	  		this.fold = !this.fold;
+	  	}
+	  },
+	  components: {
+	  	CartControl
 	  }
+
 	};
 </script>
 
@@ -180,6 +227,51 @@
 				}
 			}
 
+		}
+		.shopcart-list {
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: -1;
+			width: 100%;
+			&.fold-transition {
+				transform: translate3d(0,-100%,0);
+			}
+			&.fold-enter {
+				transform: translate3d(0,0,0);
+			}
+			&.fold-enter-active {
+				transition: all 0.5s;
+			}
+			&.fold-leave-active {
+				transition: all 0.5s;
+				transform: translate3d(0,0,0);
+			} 
+
+			.list-header {
+				height: 40px;
+				line-height: 40px;
+				padding: 0 18px;
+				background: #f3f5f7;
+				border-bottom: 1px solid rgba(7, 17, 27, 0.1);
+				.title {
+					float: left;
+					font-size: 14px;
+					color: rgb(7, 17, 27);
+				}
+				.empty {
+					float: right;
+					font-size: 12px;
+					color: rgb(0, 160, 220);
+				}
+			}
+			.list-content {
+				padding: 0 18px;
+				max-height: 217px;
+				background: #fff;
+				overflow: hidden;
+
+			}
 		}
 	}
 </style>
