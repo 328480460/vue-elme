@@ -10,7 +10,7 @@
 					<span class="name">{{seller.name}}</span>
 				</div>
 				<div class="description">{{seller.description}}/{{seller.deliveryTime}} 送达</div>
-				<div class="supports">
+				<div class="supports" v-if="seller.supports">
 					<span class="icon" :class='classMap[seller.supports[0].type]'></span>
 					<span class="text">{{seller.supports[0].description}}</span>
 				</div>
@@ -71,7 +71,9 @@ import star from '../../components/star/star';
 export default {
   name: 'v-header',
   props: {
-  	seller: {}
+  	seller: {
+  		type: Object
+  	}
   },
   data: function() {
     return {
@@ -81,7 +83,6 @@ export default {
   methods: {
     showDetail() {
      	this.datailShow = true;
-     	console.log(this.seller.avatar);
     }
   },
   created() {
