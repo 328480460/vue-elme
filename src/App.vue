@@ -19,23 +19,27 @@
 <script>
 import header from './components/header/header.vue';
 import Vue from 'vue';
-// import VueResource from 'vue-resource';
-import FalseData from '../data.json';
 import axios from 'axios';
 
 Vue.prototype.$ajax = axios;
-// Vue.use(VueResource);
 
+let ERR_OK = 0;
 export default {
   name: 'app',
   created: function() {
-    this.seller = FalseData.seller;
     this.$ajax({method: 'get', url: '/api/seller'}).then((res) => {
-      console.log(res.data.data);
+      if (res.data.errno === ERR_OK) {
+        this.seller = res.data.data;
+      }
     });
   },
   components: {
     'v-header': header
+  },
+  data() {
+    return {
+      seller: {}
+    };
   }
 };
 </script>

@@ -44,11 +44,11 @@
 </template>
 
 <script>
-import FalseData from '../../../data.json';
 import BScroll from 'better-scroll';
 import ShopCart from '../shopcart/shopcart';
 import CartControl from '../cartcontrol/cartcontrol';
 
+let ERR_OK = 0;
 export default {
   name: 'v-goods',
   props: {
@@ -57,22 +57,23 @@ export default {
   	}
   },
   created() {
-  	console.log(this.seller.deliveryPrice);
-  	this.goods = FalseData.goods;
-  	this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
-  	this.$nextTick(() => {
-  		this._initScroll();
-  		this._calculateHeight();
+  	this.$ajax.get('api/goods').then((res) => {
+  		if (res.data.errno === ERR_OK) {
+  			this.goods = res.data.data;
+  			this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+		  	this.$nextTick(() => {
+		  		this._initScroll();
+		  		this._calculateHeight();
+		  	});
+  		}
   	});
   },
-  // mounted() {
-  // 	this._initScroll();
-  // },
   data() {
   	return {
   		goods: [],
   		listHeight: [],
-  		scrollY: 0
+  		scrollY: 0,
+  		classMap: []
   	};
   },
   computed: {

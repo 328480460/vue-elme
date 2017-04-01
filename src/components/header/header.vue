@@ -70,7 +70,9 @@ import star from '../../components/star/star';
 
 export default {
   name: 'v-header',
-  props: ['seller'],
+  props: {
+  	seller: {}
+  },
   data: function() {
     return {
       datailShow: false
@@ -79,6 +81,7 @@ export default {
   methods: {
     showDetail() {
      	this.datailShow = true;
+     	console.log(this.seller.avatar);
     }
   },
   created() {
