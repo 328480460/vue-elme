@@ -61,6 +61,7 @@ export default {
   		if (res.data.errno === ERR_OK) {
   			this.goods = res.data.data;
   			this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
+  			// DOM 更新了 操作dom时一定要在$nextTick里
 		  	this.$nextTick(() => {
 		  		this._initScroll();
 		  		this._calculateHeight();
@@ -70,10 +71,9 @@ export default {
   },
   data() {
   	return {
-  		goods: [],
-  		listHeight: [],
-  		scrollY: 0,
-  		classMap: []
+  		goods: [],		// 所有的food信息
+  		listHeight: [],	// 存放右侧food的每个li的高度数组
+  		scrollY: 0		// 右侧实时滚动Y的值
   	};
   },
   computed: {
