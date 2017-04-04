@@ -14,7 +14,7 @@
 				<li v-for="item in goods" class="food-list food-list-hook">
 					<h1 class="title">{{item.name}}</h1>
 					<ul>
-						<li v-for="food in item.foods" class="food-item" >
+						<li v-for="food in item.foods" class="food-item" @click="selectFood(food,$event)">
 							<div class="icon">
 								<img :src="food.icon" width="57" height="57">
 							</div>
@@ -38,7 +38,10 @@
 				</li>
 			</ul>
 		</div>
+		<!-- 购物车组件 -->
 		<ShopCart :select-foods="selectFoods" :deliveryPrice="seller.deliveryPrice" :minPrice="seller.minPrice"></ShopCart>
+		<!-- food详情页组件 -->
+		<food :food="selectedFood" :showFlag="showFoodDetailFlag" @foodDetailHide="foodDetailHide"></food>
 	</div>
 	
 </template>
@@ -47,6 +50,7 @@
 import BScroll from 'better-scroll';
 import ShopCart from '../shopcart/shopcart';
 import CartControl from '../cartcontrol/cartcontrol';
+import Food from '../food/food';
 
 let ERR_OK = 0;
 export default {
@@ -73,7 +77,9 @@ export default {
   	return {
   		goods: [],		// 所有的food信息
   		listHeight: [],	// 存放右侧food的每个li的高度数组
-  		scrollY: 0		// 右侧实时滚动Y的值
+  		scrollY: 0,		// 右侧实时滚动Y的值
+  		selectedFood: {},	// 选中的food
+  		showFoodDetailFlag: false	// food详情页显示标示
   	};
   },
   computed: {
@@ -131,11 +137,23 @@ export default {
   		let el = foodList[index];
   		this.foodsScroll.scrollToElement(el, 300);
   		console.log(index);
+  	},
+  	selectFood(food, event) {
+  		if (!event._constructed) {
+  			return;
+  		}
+  		console.log(food);
+  		this.selectedFood = food;
+  		this.showFoodDetailFlag = true;
+  	},
+  	foodDetailHide() {
+  		this.showFoodDetailFlag = false;
   	}
   },
   components: {
   	ShopCart,
-  	CartControl
+  	CartControl,
+  	Food
   }
 };
 </script>
