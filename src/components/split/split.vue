@@ -3,15 +3,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-    export default{
-        data() {
-            return {}
-        },
-        methods: {}
-    }
+    export default{};
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
+<style  lang="less" scoped>
     .split {
         width: 100%;
         height: 16px;

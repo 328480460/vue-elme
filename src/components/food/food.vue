@@ -18,14 +18,39 @@
 						<span class="now">￥{{food.price}}</span>
 						<span v-show="food.oldPrice" class="old">￥{{food.oldPrice}}</span>
 					</div>
+					<div class="cartcontrol-wrapper">
+						<!--  购物车组件 -->
+						<CartControl :food="food"></CartControl>
+					</div>
+					<transition name="fade">
+						<div class="buy fade-transition" v-show="!food.count || food.count === 0" @click.stop.prevent="addFirst">加入购物车</div>
+					</transition>
 				</div>
-				<div class="cartcontrol-wrapper">
-					<!--  购物车组件 -->
-					<CartControl :food="food"></CartControl>
+				<Split v-show="food.info"></Split>
+				<div class="info" v-show="food.info">
+					<h1 class="title">商品信息</h1>
+					<p class="text" >{{food.info}}</p>
 				</div>
-				<transition name="fade">
-					<div class="buy fade-transition" v-show="!food.count || food.count === 0" @click.stop.prevent="addFirst">加入购物车</div>
-				</transition>
+				<Split></Split>
+				<div class="rating">
+					<h1 class="title">商品评价</h1>
+					<RatingSelect :select-type="selectType" :only-content="onlyContent" :desc="desc" :ratings="food.ratings" @ratingtypeSelect ="ratingtypeSelect" @contentToggle="contentToggle"></RatingSelect>
+					<div class="rating-wrapper">
+						<ul v-show="food.ratings && food.ratings.length">
+							<li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item border-1px">
+								<div class="user">
+									<span class="name">{{rating.username}}</span>
+									<img :src="rating.avatar" class="avatar" height="14" width="14">
+								</div>
+								<div class="time">{{rating.rateTime}}</div>
+								<p class="text">
+									<span :class="{'icon-thumb_up':rating.rateType === 0,'icon-thumb_down':rating.rateType === 1,}"></span>{{rating.text}}
+								</p>
+							</li>
+						</ul>
+						<div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</transition>
@@ -34,7 +59,15 @@
 <script>
 import BScroll from 'better-scroll';
 import CartControl from '../cartcontrol/cartcontrol';
+import Split from '../split/split';
+import RatingSelect from '../ratingSelect/ratingSelect';
+
 import Vue from 'vue';
+
+const POSITIVE = 0;
+const NEGATIVE = 1;
+const ALL = 2;
+
 export default {
   name: 'food',
   props: {
@@ -43,20 +76,58 @@ export default {
   	},
   	showFlag: false
   },
+  data() {
+  	return {
+  		selectType: ALL,
+  		onlyContent: true,
+  		desc: {
+  			all: '全部',
+            positive: '推荐',
+            negative: '吐槽'
+  		}
+  	};
+  },
   methods: {
   	hide() {
   		this.$emit('foodDetailHide');
   	},
   	addFirst(event) {
+  		console.log(this.food);
   		if (event._contructed) {
   			return;
   		}
   		Vue.set(this.food, 'count', 1);
+  	},
+  	needShow(type, text) {
+  		if (this.onlyContent && !text) {
+  			return false;
+  		}
+  		if (this.selectType === ALL) {
+  			return true;
+  		} else {
+  			return type === this.selectType;
+  		}
+  	},
+  	ratingtypeSelect(type) {
+  		this.selectType = type;
+  		this.$nextTick(() => {
+  			this.scroll.refresh();
+  		});
+  	},
+  	contentToggle(onlyContent) {
+  		this.onlyContent = onlyContent;
+  		this.$nextTick(() => {
+  			this.scroll.refresh();
+  		});
   	}
   },
+  // 监听food页面是否显示
   watch: {
   	showFlag() {
   		if (this.showFlag) {
+  			// 初始化ratingselect
+  			this.selectType = ALL;
+	  		this.onlyContent = true;
   			this.$nextTick(() => {
   				if (!this.scroll) {
   					this.scroll = new BScroll(this.$refs.food, {
@@ -70,7 +141,9 @@ export default {
   	}
   },
   components: {
-  	CartControl
+  	CartControl,
+  	Split,
+  	RatingSelect
   }
 };
 </script>
@@ -120,6 +193,7 @@ export default {
 
 		}
 		.content {
+			position: relative;
 			padding: 18px;
 			.title {
 				line-height: 14px;
@@ -155,41 +229,121 @@ export default {
 					color: rgb(147, 153,159);
 				}
 			}
+		
+			.cartcontrol-wrapper {
+				position: absolute;
+				right: 12px;
+				bottom: 12px;
+			}
+			.buy {
+				position: absolute;
+				right: 18px;
+				bottom: 18px;
+				z-index: 10;
+				height: 24px;
+				line-height: 24px;
+				padding: 0 12px;
+				box-sizing: border-box;
+				font-size: 10px;
+				border-radius: 12px;
+				color: #fff;
+				background: rgb(0, 160, 220);
+				&.fade-transition {
+					opacity: 1;
+				}
+				&.fade-enter{
+					opacity: 0;
+				}
+				&.fade-enter-active  {
+					transition: all 2s;
+				}
+				&.fade-leave {
+					opacity: 1;
+				}
+				&.fade-leave-active  {
+					transition: all 2s;
+					opacity: 0;
+				}
+			}
 		}
-		.cartcontrol-wrapper {
-			position: absolute;
-			right: 12px;
-			bottom: 12px;
-		}
-		.buy {
-			position: absolute;
-			right: 18px;
-			bottom: 18px;
-			z-index: 10;
-			height: 24px;
-			line-height: 24px;
-			padding: 0 12px;
-			box-sizing: border-box;
-			font-size: 10px;
-			border-radius: 12px;
-			color: #fff;
-			background: rgb(0, 160, 220);
-			&.fade-transition {
-				opacity: 1;
+		.info {
+			padding: 18px;
+			.title {
+				line-height: 14px;
+				margin-bottom: 6px;
+				font-size: 14px;
+				color: rgb(7, 17, 27);
 			}
-			&.fade-enter{
-				opacity: 0;
-			}
-			&.fade-enter-active  {
-				transition: all 2s;
-			}
-			&.fade-leave {
-				opacity: 1;
-			}
-			&.fade-leave-active  {
-				transition: all 2s;
-				opacity: 0;
+			.text {
+				color: rgb(77, 85, 93);
+				font-size: 12px;
+				line-height: 24px;
+				padding: 0 8px;
 			}
 		}
+		.rating {
+			padding-top: 18px;
+			.title{
+				line-height: 14px;
+				margin-left: 18px;
+				font-size: 12px;
+				color: rgb(7, 17, 27);
+			}
+			.rating-wrapper {
+				padding: 0 18px;
+				.rating-item {
+					position: relative;
+					padding: 16px 0;
+					.border-1px(rgba(7,17,27,.1));
+					.user {
+						position: absolute;
+						right: 0;
+						top: 16px;
+						line-height: 12px;
+						font-size: 12px;
+						.name {
+							display: inline-block;
+							vertical-align: top;
+							margin-right: 6px;
+							font-size: 10px;
+							color: rgb(147, 153, 159);
+						}
+						.avatar {
+							border-radius: 50%;
+						}
+					}
+					.time {
+						margin-bottom: 6px;
+						line-height: 12px;
+						font-size: 10px;
+						color: rgb(147, 153, 159);
+					}
+					.text {
+						line-height: 16px;
+						font-size: 12px;
+						color: rgb(7, 17, 27);
+						.icon-thumb_down,.icon-thumb_up {
+							display: inline-block;
+							margin-right: 4px;
+							line-height: 24px;
+							font-size: 12px;
+						}
+						.icon-thumb_up {
+							color: rgb(0, 160, 220);
+						}
+						.icon-thumb_down {
+							color: rgb(147, 153, 159);
+						}
+					}
+				}
+				.no-rating {
+					padding: 16px 0;
+					font-size: 12px;
+					color: rgb(147, 153, 159);
+				}
+			}
+			
+		}
+
 	}
 </style>
