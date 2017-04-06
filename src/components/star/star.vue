@@ -1,5 +1,5 @@
 <template>
-  <div id="star" :class="starType">
+  <div id="star" :class="starType" class="star">
     <span v-for="itemClass in itemClasses" :class="itemClass" class="star-item"></span>      
   </div>
 </template>
@@ -45,7 +45,7 @@
 
 <style lang="less" scoped>
 @import '../../common/styles/mixin.less';
-#star {
+.star {
   font-size: 0;
   .star-item {
     display: inline-block;
@@ -75,7 +75,7 @@
     .star-item {
       width: 15px;
       height: 15px;
-      margin-right: 16px;
+      margin-right: 8px;
       background-size: 15px 15px;
       &:last-child {
         margin-right: 0;

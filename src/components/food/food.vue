@@ -42,7 +42,7 @@
 									<span class="name">{{rating.username}}</span>
 									<img :src="rating.avatar" class="avatar" height="14" width="14">
 								</div>
-								<div class="time">{{rating.rateTime}}</div>
+								<div class="time">{{rating.rateTime | formatDate}}</div>
 								<p class="text">
 									<span :class="{'icon-thumb_up':rating.rateType === 0,'icon-thumb_down':rating.rateType === 1,}"></span>{{rating.text}}
 								</p>
@@ -61,8 +61,8 @@ import BScroll from 'better-scroll';
 import CartControl from '../cartcontrol/cartcontrol';
 import Split from '../split/split';
 import RatingSelect from '../ratingSelect/ratingSelect';
-
 import Vue from 'vue';
+import {formatDate} from '../../common/js/date.js';
 
 const POSITIVE = 0;
 const NEGATIVE = 1;
@@ -119,6 +119,12 @@ export default {
   		this.$nextTick(() => {
   			this.scroll.refresh();
   		});
+  	}
+  },
+  filters: {
+  	formatDate(time) {
+  		let date = new Date(time);
+  		return formatDate(date, 'yyyy-MM-dd hh:mm');
   	}
   },
   // 监听food页面是否显示
