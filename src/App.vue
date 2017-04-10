@@ -24,6 +24,7 @@ import axios from 'axios';
 Vue.prototype.$ajax = axios;
 
 let ERR_OK = 0;
+
 export default {
   name: 'app',
   created: function() {

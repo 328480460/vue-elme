@@ -18,6 +18,7 @@
 					</div>
 				</div>
 			</div>
+
 			<transition name="fold">
 				<div class="shopcart-list fold-transition" v-show="listShow">
 					<div class="list-header">
@@ -262,6 +263,7 @@
 			}
 
 		}
+		
 		.shopcart-list {
 			position: absolute;
 			left: 0;
