@@ -26,7 +26,7 @@
 			</div>
 			<split></split>
 			<ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc"
-                          :ratings="ratings" @ratingtypeSelect="select" @onlyContent2="onlyContent2"></ratingselect>
+                          :ratings="ratings" @ratingtypeSelect="select" @contentToggle="onlyContent2"></ratingselect>
             <div class="rating-wrapper">
                 <ul>
                     <li v-for="rating in ratings" class="rating-item border-1px" v-show="needShow(rating.rateType, rating.text)">
@@ -157,8 +157,8 @@ export default {
 					border-right: 1px solid rgba(7, 17, 27, 0.1);
 					text-align: center;
 					@media only screen and (max-width: 320px) {
-	                    flex: 0 0 120px;
-	                    width: 120px;
+	                    flex: 0 0 110px;
+	                    width: 110px;
 	                }
 					.score {
 						margin-bottom: 6px;
