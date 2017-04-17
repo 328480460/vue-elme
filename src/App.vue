@@ -21,6 +21,8 @@ import header from './components/header/header.vue';
 import Vue from 'vue';
 import axios from 'axios';
 
+var bus = new Vue();
+
 Vue.prototype.$ajax = axios;
 
 let ERR_OK = 0;

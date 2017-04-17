@@ -1,5 +1,5 @@
 <template>
-    <div class="ratingselect">
+    <div class="ratingselect" name="ratingselect">
         <div class="rating-type border-1px">
             <span @click="select(2, $event)" class="block positive" :class="{'active': selectType === 2}">{{ desc.all }}<span
                     class="count">{{ ratings.length }}</span></span>
@@ -22,6 +22,7 @@
     const ALL = 2;
 
     export default {
+        name: 'ratingselect',
         props: {
             ratings: {
                 type: Array,

@@ -1,5 +1,5 @@
 <template>
-	<div class="ratings" name="ratings">
+	<div class="ratings" name="ratings" ref="ratings">
 		<div class="rating-content">
 			<div class="overview">
 				<div class="overview-left">
@@ -24,27 +24,121 @@
 					</div>
 				</div>
 			</div>
+			<split></split>
+			<ratingselect :select-type="selectType" :only-content="onlyContent" :desc="desc"
+                          :ratings="ratings" @ratingtypeSelect="select" @onlyContent2="onlyContent2"></ratingselect>
+            <div class="rating-wrapper">
+                <ul>
+                    <li v-for="rating in ratings" class="rating-item border-1px" v-show="needShow(rating.rateType, rating.text)">
+                        <div class="avatar">
+                            <img :src="rating.avatar" width="28" height="28">
+                        </div>
+                        <div class="content">
+                            <h1 class="name">{{ rating.username }}</h1>
+                            <div class="star-wrapper">
+                                <star :size="24" :score="rating.score"></star>
+                                <span class="delivery" v-if="rating.deliveryTime">{{ rating.deliveryTime }}</span>
+                            </div>
+                            <p class="text">{{ rating.text }}</p>
+                            <div class="recommend" v-if="rating.recommend && rating.recommend.length">
+                                <i class="icon-thumb_up"></i>
+                                <span v-for="item in rating.recommend" class="item">{{ item }}</span>
+                            </div>
+                            <div class="time">
+                                {{ rating.rateTime | formatDate }}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
 		</div>
 	</div>
 </template>
 
 <script>
 import star from '../star/star';
+import {formatDate} from '../../common/js/date';
+import split from '../split/split.vue';
+import ratingselect from '../ratingselect/ratingselect.vue';
+import BScroll from 'better-scroll';
+
+const ALL = 2;
+const ERR_OK = 0;
 
 export default {
-  name: 'ratings',
-  props: {
-  	seller: {
-  		type: Object
-  	}
-  },
-  components: {
-  	star
-  }
+    name: 'ratings',
+    props: {
+	  	seller: {
+	  		type: Object
+	  	}
+    },
+    data() {
+	    return {
+	        ratings: [],
+	        selectType: ALL,
+	        onlyContent: true,
+	        desc: {
+	  			all: '全部',
+	            positive: '推荐',
+	            negative: '吐槽'
+	  		}
+	    };
+    },
+   created() {
+        this.$ajax.get('/api/ratings').then((response) => {
+        	console.log(response);
+            response = response.data;
+            if (response.errno === ERR_OK) {
+                this.ratings = response.data;
+                this.$nextTick(() => {
+                    this.scroll = new BScroll(this.$refs.ratings, {
+                        click: true
+                    });
+                });
+            }
+        });
+    },
+    components: {
+        star,
+        ratingselect,
+        split
+    },
+    methods: {
+        select(type) {
+            this.selectType = type;
+            this.$nextTick(() => {
+                this.scroll.refresh();
+            });
+        },
+        onlyContent2(onlyContent) {
+            this.onlyContent = onlyContent;
+            this.$nextTick(() => {
+                this.scroll.refresh();
+            });
+        },
+        needShow(type, text) {
+            if (this.onlyContent && !text) {
+                return false;
+            }
+            if (this.selectType === ALL) {
+                return true;
+            } else {
+                return type === this.selectType;
+            }
+        }
+    },
+    filters: {
+        formatDate(time) {
+            let date = new Date(time);
+            return formatDate(date, 'yyyy-MM-dd hh:mm');
+        }
+    }
 };
 </script>
 
 <style lang="less" scoped>
+	@import '../../common/styles/mixin.less';
+
 	.ratings {
 		position: absolute;
 		top: 174px;
@@ -62,6 +156,10 @@ export default {
 					width: 137px;
 					border-right: 1px solid rgba(7, 17, 27, 0.1);
 					text-align: center;
+					@media only screen and (max-width: 320px) {
+	                    flex: 0 0 120px;
+	                    width: 120px;
+	                }
 					.score {
 						margin-bottom: 6px;
 						line-height: 28px;
@@ -84,6 +182,9 @@ export default {
 				.overview-right {
 					flex: 1;
 					padding-left: 24px;
+					@media only screen and (max-width: 320px) {
+	                    padding-left: 6px;
+	                }
 					.score-wrapper {
 						margin-bottom: 8px;
 						font-size: 0;
@@ -122,5 +223,81 @@ export default {
 				}
 			}
 		}
+		.rating-wrapper {
+            padding: 0 18px;
+            .rating-item {
+                display: flex;
+                padding: 18px 0;
+                .border-1px(rgba(7, 17, 27, .1));
+                .avatar {
+                    flex: 0 0 28px;
+                    width: 28px;
+                    margin-right: 12px;
+                    img {
+                        border-radius: 50%;
+                    }
+                }
+                .content {
+                    flex: 1;
+                    position: relative;
+                    .name {
+                        margin-bottom: 4px;
+                        line-height: 12px;
+                        font-size: 10px;
+                        color: rgb(7, 17, 27);
+                    }
+                    .star-wrapper {
+                        margin-bottom: 6px;
+                        font-size: 0;
+                        .star {
+                            display: inline-block;
+                            vertical-align: top;
+                            margin-right: 6px;
+                        }
+                        .delivery {
+                            display: inline-block;
+                            vertical-align: top;
+                            line-height: 12px;
+                            font-size: 10px;
+                            color: rgb(147, 153, 159);
+                        }
+                    }
+                    .text {
+                        margin-bottom: 8px;
+                        line-height: 18px;
+                        color: rgb(7, 17, 27);
+                        font-size: 12px;
+                    }
+                    .recommend {
+                        line-height: 16px;
+                        font-size: 0;
+                        .icon-thumb_up, .item {
+                            display: inline-block;
+                            margin: 0 8px 4px 0;
+                            font-size: 9px;
+                        }
+                        .icon-thumb_up {
+                            color: rgb(0, 160, 220);
+                        }
+                        .item {
+                            padding: 0 6px;
+                            border: 1px solid rgba(7, 17, 27, .1);
+                            border-radius: 1px;
+                            color: rgb(147, 153, 159);
+                            background: #fff;
+                            font-size: 9px;
+                        }
+                    }
+                    .time {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        line-height: 12px;
+                        font-size: 10px;
+                        color: rgb(147, 153, 159);
+                    }
+                }
+            }
+        }
 	}
 </style>
